@@ -77,7 +77,8 @@ CheckChat = function(msg)
     for i,v in pairs(Commands) do
         if msg:lower():sub(1,#(v.Cmd..'/')) == v.Cmd..'/' then
            msg = msg:sub(#(v.Cmd..'/')+1)
-           v.Func(msg)
+		   CmdRun = true
+           return v.Func(msg)
         end
     end
 end
@@ -91,6 +92,7 @@ NC('refresh',function(msg)
 end)
 
 NC('music',function(msg)
+    print(msg..':function')
     SID = msg
     Probe()
     NewChat('Music is now '..game:GetService('MarketplaceService'):GetProductInfo(tonumber(SID)).Name)
@@ -101,7 +103,7 @@ NewChat = function(msg) spawn(function()
 		local BG = Create'BillboardGui'{Parent=EarthPart,Size=UDim2.new(5,0,3,0),StudsOffset=Vector3.new(0,4.8,0)}
 		local PN = Create'TextLabel'{Parent=BG,BackgroundTransparency=1,Position=UDim2.new(0,0,.98,0),Size=UDim2.new(1,0,.3,0),ZIndex=2,Font='SourceSansBold',FontSize='Size18',TextColor3=Color3.new(0/255,0/255,255/255),Text=Player.Name..' :MLG-PROBE'}
 	end
-	if #msg ~= 75 then
+	if #msg ~= 50 then
 		local PCB = Create'TextLabel'{Parent=EarthPart:FindFirstChild('BillboardGui',true),BackgroundColor3=Color3.new(255/255,255/255,255/255),BackgroundTransparency=1,Position=UDim2.new(0,0,.9,0),Size=UDim2.new(1,0,.15,0),ZIndex=3,Font='ArialBold',FontSize='Size24',TextColor3=Color3.new(255/255,255/255,255/255),TextTransparency=1,Text='MLG-PROBE: '..msg:gsub('','\5')}
 		spawn(function()
 			for i = .1,1,.1 do
@@ -124,6 +126,7 @@ NewChat = function(msg) spawn(function()
 	end
 end) end
 
+wait()
 Player.Chatted:connect(function(msg)
 	if msg:lower():sub(1,3) == '/e ' then
 		msg = msg:sub(4)
@@ -159,22 +162,26 @@ Mouse.Button1Down:connect(function()
     	Bullet.CFrame = CFrame.new(GunPart.Position,Mouse.Hit.p)
     	* CFrame.new(0,0,-Dist/2.3)
     	* CFrame.Angles(math.pi/2,0,0)
-    	Bullet.Touched:connect(function(obj)
-    		print(obj.Name)
-	        if obj.ClassName == 'Part' then
-				if obj.Name == 'Head' then
-					local HeadSound = Instance.new("Sound",obj) HeadSound.Pitch = 1 HeadSound.Volume = 1 HeadSound.Looped = false HeadSound.SoundId = "rbxassetid://131313234"
-    				HeadSound:Play()
-					if obj.Parent:FindFirstChild('Humanoid',true) then
-	            		obj.Parent.Humanoid.Health = 0
-					end
-				else
-					if obj.Parent:FindFirstChild('Humanoid',true) then
-	             		obj.Parent.Humanoid.Health = obj.Parent.Humanoid.Health - 15
-	            	end
+		local obj = Mouse.Target
+	    if obj.ClassName == 'Part' and obj ~= Bullet then
+			if obj.Name == 'Head' then
+				local HeadSound = Instance.new("Sound",obj) HeadSound.Pitch = 1 HeadSound.Volume = 1 HeadSound.Looped = false HeadSound.SoundId = "rbxassetid://131313234"
+    			HeadSound:Play()
+				if obj.Parent:FindFirstChild('Humanoid',true) then
+	            	obj.Parent.Humanoid.Health = 0
+				end
+			else
+				if obj.Parent:FindFirstChild('Humanoid',true) then
+	             obj.Parent.Humanoid.Health = obj.Parent.Humanoid.Health - 15
+				end
 			end
-	        end
-	    end)
+			if obj.Parent:FindFirstChild('Humanoid',true) then
+				obj.Died:connect(function()
+					local HeadSound = Instance.new("Sound",obj) HeadSound.Pitch = 1 HeadSound.Volume = 1 HeadSound.Looped = false HeadSound.SoundId = "rbxassetid://131979189"
+    				HeadSound:Play()
+				end)
+			end
+	    end
     	local GunSound = Instance.new("Sound",workspace) GunSound.Pitch = 1 GunSound.Volume = .6 GunSound.Looped = false GunSound.SoundId = "rbxassetid://132456235"
     	GunSound:Play()
     	for i = 0,1,.1 do
