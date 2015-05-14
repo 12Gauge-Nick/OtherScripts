@@ -162,6 +162,7 @@ Mouse.Button1Down:connect(function()
     	Bullet.CFrame = CFrame.new(GunPart.Position,Mouse.Hit.p)
     	* CFrame.new(0,0,-Dist/2.3)
     	* CFrame.Angles(math.pi/2,0,0)
+    	pcall(function()
 		local obj = Mouse.Target
 	    if obj.ClassName == 'Part' and obj ~= Bullet then
 			if obj.Name == 'Head' then
@@ -170,18 +171,25 @@ Mouse.Button1Down:connect(function()
 				if obj.Parent:FindFirstChild('Humanoid',true) then
 	            	obj.Parent.Humanoid.Health = 0
 				end
+				if obj.Parent:FindFirstChild('Humanoid',true) then
+				    obj.Died:connect(function()
+				    	local HeadSound = Instance.new("Sound",obj) HeadSound.Pitch = 1 HeadSound.Volume = 1 HeadSound.Looped = false HeadSound.SoundId = "rbxassetid://131979189"
+    			    	HeadSound:Play()
+				    end)
+			    end
 			else
 				if obj.Parent:FindFirstChild('Humanoid',true) then
 	             obj.Parent.Humanoid.Health = obj.Parent.Humanoid.Health - 15
 				end
+				if obj.Parent:FindFirstChild('Humanoid',true) then
+				    obj.Died:connect(function()
+					    local HeadSound = Instance.new("Sound",obj) HeadSound.Pitch = 1 HeadSound.Volume = 1 HeadSound.Looped = false HeadSound.SoundId = "rbxassetid://131979189"
+    			    	HeadSound:Play()
+			    	end)
+		    	end
 			end
-			if obj.Parent:FindFirstChild('Humanoid',true) then
-				obj.Died:connect(function()
-					local HeadSound = Instance.new("Sound",obj) HeadSound.Pitch = 1 HeadSound.Volume = 1 HeadSound.Looped = false HeadSound.SoundId = "rbxassetid://131979189"
-    				HeadSound:Play()
-				end)
-			end
-	    end
+        end
+        end)
     	local GunSound = Instance.new("Sound",workspace) GunSound.Pitch = 1 GunSound.Volume = .6 GunSound.Looped = false GunSound.SoundId = "rbxassetid://132456235"
     	GunSound:Play()
     	for i = 0,1,.1 do
