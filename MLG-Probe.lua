@@ -75,7 +75,8 @@ local Commands = {}
 
 local CheckChat = function(msg)
     for i,v in pairs(Commands) do
-        if msg:lower():sub(1,#(v.Cmd)) == v.Cmd then
+        if msg:lower():sub(1,#(v.Cmd..';')) == v.Cmd..';' then
+            print'bypassed cmd checker'
            msg = msg:sub(#(v.Cmd)+1)
            return v.Func(Player,msg)
         end
@@ -154,10 +155,12 @@ game:service'StarterGui':GetCoreGuiEnabled('All',true)
 
 Mouse.Button1Down:connect(function()
 	local Target = Mouse.Target
-	local Dist = ((Target.Position-EarthPart.Position).magnitude)
-	local Bullet = Create'Part'{BrickColor=BrickColor.new('New Yeller'),Parent=EarthPart,Name='Bullet',Anchored=true,CanCollide=false,Locked=true,FormFactor='Custom',Size=Vector3.new(.2,Dist,.2)}
+	local Dist = ((EarthPart.Position-Target.Position).magnitude) --((Target.Position-EarthPart.Position).magnitude)
+	local Bullet = Create'Part'{BrickColor=BrickColor.new('New Yeller'),Parent=EarthPart,Name='Bullet',Anchored=true,CanCollide=false,Locked=true,FormFactor='Custom'}
+	Bullet.Size=Vector3.new(.2,Dist,.2)
 	Bullet.CFrame = CFrame.new(EarthPart.Position,Target.Position)
-	* CFrame.new(0,0,-Dist)
+	* CFrame.new(0,0,-Dist/2)
+	* CFrame.Angles(math.pi/2,0,0)
 	local GunSound = Instance.new("Sound",workspace) GunSound.Pitch = 1 GunSound.Volume = 1 GunSound.Looped = false GunSound.SoundId = "rbxassetid://132456235"
 	GunSound:Play()
 	for i = 0,1.1 do
