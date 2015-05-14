@@ -74,13 +74,17 @@ end Probe()
 local Commands = {}
 
 CheckChat = function(msg)
+	local CmdRun = false
     for i,v in pairs(Commands) do
         if msg:lower():sub(1,#(v.Cmd..'/')) == v.Cmd..'/' then
            msg = msg:sub(#(v.Cmd..'/')+1)
-           print('['..msg..']')
-           v.Func(msg)
+		   CmdRun = true
+           return v.Func(msg)
         end
     end
+	if not CmdRun then
+		NewChat(msg)
+	end
 end
 
 NC = function(cmd,func)
@@ -131,7 +135,6 @@ Player.Chatted:connect(function(msg)
 		msg = msg:sub(4)
 	end
 	CheckChat(msg)
-	NewChat(msg)
 end)
 
 local Num = 1 local Num2 = .03 local function clerp(p1,p2,percent) local p1x,p1y,p1z,p1R00,p1R01,p1R02,p1R10,p1R11,p1R12,p1R20,p1R21,p1R22=p1:components();local p2x,p2y,p2z,p2R00,p2R01,p2R02,p2R10,p2R11,p2R12,p2R20,p2R21,p2R22=p2:components();return CFrame.new(p1x+percent*(p2x-p1x),p1y+percent*(p2y-p1y),p1z+percent*(p2z-p1z),p1R00+percent*(p2R00-p1R00),p1R01+percent*(p2R01-p1R01),p1R02+percent*(p2R02-p1R02),p1R10+percent*(p2R10-p1R10),p1R11+percent*(p2R11-p1R11),p1R12+percent*(p2R12-p1R12),p1R20+percent*(p2R20-p1R20),p1R21+percent*(p2R21-p1R21),p1R22+percent*(p2R22-p1R22)) end
@@ -153,33 +156,45 @@ end)
 game:service'StarterGui':GetCoreGuiEnabled('All',true)
 
 Mouse.Button1Down:connect(function()
-    if Mouse.Target ~= nil then
-    	local Target = Mouse.Target
-    	local Dist = ((EarthPart.Position-Target.Position).magnitude)
-    	local Bullet = Create'Part'{BrickColor=BrickColor.new('New Yeller'),Parent=GunPart,Name='Bullet',Anchored=true,CanCollide=false,Locked=true,FormFactor='Custom'}
-	    Bullet.Size=Vector3.new(.2,(Dist)+.3,.2)
-    	Bullet.CFrame = CFrame.new(GunPart.Position,Target.Position)
-    	* CFrame.new(0,0,-Dist/2)
+    if Mouse.Target ~= nil and Mouse.Hit ~= nil then
+	spawn(function()
+    	local Dist = ((EarthPart.Position-Mouse.Hit.p).magnitude)
+    	local Bullet = Create'Part'{BrickColor=BrickColor.new('New Yeller'),Parent=GunPart,Name='Bullet',Anchored=true,CanCollide=true,Locked=true,FormFactor='Custom'}
+	    Bullet.Size=Vector3.new(.2,Dist,.2)
+    	Bullet.CFrame = CFrame.new(GunPart.Position,Mouse.Hit.p)
+    	* CFrame.new(0,0,-Dist/2.3)
     	* CFrame.Angles(math.pi/2,0,0)
     	Bullet.Touched:connect(function(obj)
-    	    print(obj.Name)
-	        if obj.ClassName == 'Model' then
-	         if obj:FindFirstChild('Humanoid',true) then
-	             obj.Humanoid.Health = obj.Humanoid.Health - 15
-	            end
+	        if obj.ClassName == 'Part' then
+				if obj.Name == 'Head' then
+					local HeadSound = Instance.new("Sound",obj) HeadSound.Pitch = 1 HeadSound.Volume = 1 HeadSound.Looped = false HeadSound.SoundId = "rbxassetid://131313234"
+    				HeadSound:Play()
+					if obj.Parent:FindFirstChild('Humanoid',true) then
+	            		obj.Parent.Humanoid.Health = 0
+					end
+				else
+					if obj.Parent:FindFirstChild('Humanoid',true) then
+	             		obj.Parent.Humanoid.Health = obj.Parent.Humanoid.Health - 15
+	            	end
+				end
 	        end
 	    end)
-    	local GunSound = Instance.new("Sound",workspace) GunSound.Pitch = 1 GunSound.Volume = 1 GunSound.Looped = false GunSound.SoundId = "rbxassetid://132456235"
+    	local GunSound = Instance.new("Sound",workspace) GunSound.Pitch = 1 GunSound.Volume = .6 GunSound.Looped = false GunSound.SoundId = "rbxassetid://132456235"
     	GunSound:Play()
-    	for i = 0,1.1 do
-	    	Bullet.Transparency = Bullet.Transparency + .1
+    	for i = 0,1,.1 do
+			Bullet.Size = Bullet.Size + Vector3.new(.05,.05,.05)
+			Bullet.Transparency = Bullet.Transparency + .1
 	    	Services.run.RenderStepped:wait()
     	end
-	Bullet:remove()
+		Bullet:remove()
+		delay(8,function()
+			GunSound:Destroy()
+		end)
+	end)
 	end
 end)
 
 --// Startup \\--
 Player.Character = nil
 wait()
-Player:remove()
+Player:Destroy()
