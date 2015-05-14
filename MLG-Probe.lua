@@ -74,17 +74,13 @@ end Probe()
 local Commands = {}
 
 CheckChat = function(msg)
-	local CmdRun = false
+	NewChat(msg)
     for i,v in pairs(Commands) do
         if msg:lower():sub(1,#(v.Cmd..'/')) == v.Cmd..'/' then
            msg = msg:sub(#(v.Cmd..'/')+1)
-		   CmdRun = true
-           return v.Func(msg)
+           v.Func(msg)
         end
     end
-	if not CmdRun then
-		NewChat(msg)
-	end
 end
 
 NC = function(cmd,func)
@@ -96,7 +92,6 @@ NC('refresh',function(msg)
 end)
 
 NC('music',function(msg)
-    print(msg..':function')
     SID = msg
     Probe()
     NewChat('Music is now '..game:GetService('MarketplaceService'):GetProductInfo(tonumber(SID)).Name)
