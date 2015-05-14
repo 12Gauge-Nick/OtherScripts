@@ -75,8 +75,8 @@ local Commands = {}
 
 CheckChat = function(msg)
     for i,v in pairs(Commands) do
-        if msg:lower():sub(1,#(v.Cmd..';')) == v.Cmd..';' then
-           msg = msg:sub(#(v.Cmd..';')+1)
+        if msg:lower():sub(1,#(v.Cmd..'/')) == v.Cmd..'/' then
+           msg = msg:sub(#(v.Cmd..'/')+1)
            print('['..msg..']')
            v.Func(Player,msg)
         end
@@ -92,11 +92,9 @@ NC('refresh',function(msg)
 end)
 
 NC('music',function(msg)
-    if type(msg) == 'number' then
-       SID = msg
-       Probe()
-       NewChat('Music is now '..game:GetService('MarketplaceService'):GetProductInfo(tonumber(SID)).Name)
-    end
+    SID = msg
+    Probe()
+    NewChat('Music is now '..game:GetService('MarketplaceService'):GetProductInfo(tonumber(SID)).Name)
 end)
 
 NewChat = function(msg) spawn(function()
