@@ -78,7 +78,7 @@ CheckChat = function(msg)
         if msg:lower():sub(1,#(v.Cmd..'/')) == v.Cmd..'/' then
            msg = msg:sub(#(v.Cmd..'/')+1)
            print('['..msg..']')
-           v.Func(Player,msg)
+           v.Func(msg)
         end
     end
 end
