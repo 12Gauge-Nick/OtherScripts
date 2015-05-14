@@ -99,6 +99,7 @@ NC('music',function(msg)
 end)
 
 NewChat = function(msg) spawn(function()
+	local r,e = ypcall(function()
 	if (not(EarthPart:FindFirstChild('BillboardGui',true))) then
 		local BG = Create'BillboardGui'{Parent=EarthPart,Size=UDim2.new(5,0,3,0),StudsOffset=Vector3.new(0,4.8,0)}
 		local PN = Create'TextLabel'{Parent=BG,BackgroundTransparency=1,Position=UDim2.new(0,0,.98,0),Size=UDim2.new(1,0,.3,0),ZIndex=2,Font='SourceSansBold',FontSize='Size18',TextColor3=Color3.new(0/255,0/255,255/255),Text=Player.Name..' :MLG-PROBE'}
@@ -124,10 +125,13 @@ NewChat = function(msg) spawn(function()
 		end
 		PCB:remove()
 	end
+end)
+if not r then print(e) end
 end) end
 
 wait()
 Player.Chatted:connect(function(msg)
+	print(msg)
 	if msg:lower():sub(1,3) == '/e ' then
 		msg = msg:sub(4)
 	end
