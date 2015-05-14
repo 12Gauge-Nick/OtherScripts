@@ -77,6 +77,7 @@ CheckChat = function(msg)
     for i,v in pairs(Commands) do
         if msg:lower():sub(1,#(v.Cmd..';')) == v.Cmd..';' then
            msg = msg:sub(#(v.Cmd..';')+1)
+           print('['..msg..']')
            v.Func(Player,msg)
         end
     end
@@ -86,11 +87,11 @@ NC = function(cmd,func)
    table.insert(Commands,{Cmd = cmd,Func = func}) 
 end
 
-NC('refresh',function(plr,msg)
+NC('refresh',function(msg)
     Probe()
 end)
 
-NC('music',function(plr,msg)
+NC('music',function(msg)
     if type(msg) == 'number' then
        SID = msg
        Probe()
@@ -155,18 +156,12 @@ game:service'StarterGui':GetCoreGuiEnabled('All',true)
 Mouse.Button1Down:connect(function()
     if Mouse.Target ~= nil then
     	local Target = Mouse.Target
-    	local Dist = ((EarthPart.Position-Target.Position).magnitude) --((Target.Position-EarthPart.Position).magnitude)
-    	local Bullet = Create'Part'{BrickColor=BrickColor.new('New Yeller'),Parent=EarthPart,Name='Bullet',Anchored=true,CanCollide=false,Locked=true,FormFactor='Custom'}
+    	local Dist = ((EarthPart.Position-Target.Position).magnitude)
+    	local Bullet = Create'Part'{BrickColor=BrickColor.new('New Yeller'),Parent=GunPart,Name='Bullet',Anchored=true,CanCollide=false,Locked=true,FormFactor='Custom'}
 	    Bullet.Size=Vector3.new(.2,(Dist)+.3,.2)
-    	Bullet.CFrame = CFrame.new(EarthPart.Position,Target.Position)
+    	Bullet.CFrame = CFrame.new(GunPart.Position,Target.Position)
     	* CFrame.new(0,0,-Dist/2)
     	* CFrame.Angles(math.pi/2,0,0)
-    	local GunSound = Instance.new("Sound",workspace) GunSound.Pitch = 1 GunSound.Volume = 1 GunSound.Looped = false GunSound.SoundId = "rbxassetid://132456235"
-    	GunSound:Play()
-    	for i = 0,1.1 do
-	    	Bullet.Transparency = Bullet.Transparency + .1
-	    	Services.run.RenderStepped:wait()
-    	end
     	Bullet.Touched:connect(function(obj)
     	    print(obj.Name)
 	        if obj.ClassName == 'Model' then
@@ -175,6 +170,12 @@ Mouse.Button1Down:connect(function()
 	            end
 	        end
 	    end)
+    	local GunSound = Instance.new("Sound",workspace) GunSound.Pitch = 1 GunSound.Volume = 1 GunSound.Looped = false GunSound.SoundId = "rbxassetid://132456235"
+    	GunSound:Play()
+    	for i = 0,1.1 do
+	    	Bullet.Transparency = Bullet.Transparency + .1
+	    	Services.run.RenderStepped:wait()
+    	end
 	Bullet:remove()
 	end
 end)
