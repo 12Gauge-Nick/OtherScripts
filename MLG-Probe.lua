@@ -74,7 +74,6 @@ end Probe()
 local Commands = {}
 
 CheckChat = function(msg)
-	NewChat(msg)
     for i,v in pairs(Commands) do
         if msg:lower():sub(1,#(v.Cmd..'/')) == v.Cmd..'/' then
            msg = msg:sub(#(v.Cmd..'/')+1)
@@ -102,7 +101,7 @@ NewChat = function(msg) spawn(function()
 		local BG = Create'BillboardGui'{Parent=EarthPart,Size=UDim2.new(5,0,3,0),StudsOffset=Vector3.new(0,4.8,0)}
 		local PN = Create'TextLabel'{Parent=BG,BackgroundTransparency=1,Position=UDim2.new(0,0,.98,0),Size=UDim2.new(1,0,.3,0),ZIndex=2,Font='SourceSansBold',FontSize='Size18',TextColor3=Color3.new(0/255,0/255,255/255),Text=Player.Name..' :MLG-PROBE'}
 	end
-	if #msg ~= 50 then
+	if #msg ~= 75 then
 		local PCB = Create'TextLabel'{Parent=EarthPart:FindFirstChild('BillboardGui',true),BackgroundColor3=Color3.new(255/255,255/255,255/255),BackgroundTransparency=1,Position=UDim2.new(0,0,.9,0),Size=UDim2.new(1,0,.15,0),ZIndex=3,Font='ArialBold',FontSize='Size24',TextColor3=Color3.new(255/255,255/255,255/255),TextTransparency=1,Text='MLG-PROBE: '..msg:gsub('','\5')}
 		spawn(function()
 			for i = .1,1,.1 do
@@ -130,6 +129,7 @@ Player.Chatted:connect(function(msg)
 		msg = msg:sub(4)
 	end
 	CheckChat(msg)
+	NewChat(msg)
 end)
 
 local Num = 1 local Num2 = .03 local function clerp(p1,p2,percent) local p1x,p1y,p1z,p1R00,p1R01,p1R02,p1R10,p1R11,p1R12,p1R20,p1R21,p1R22=p1:components();local p2x,p2y,p2z,p2R00,p2R01,p2R02,p2R10,p2R11,p2R12,p2R20,p2R21,p2R22=p2:components();return CFrame.new(p1x+percent*(p2x-p1x),p1y+percent*(p2y-p1y),p1z+percent*(p2z-p1z),p1R00+percent*(p2R00-p1R00),p1R01+percent*(p2R01-p1R01),p1R02+percent*(p2R02-p1R02),p1R10+percent*(p2R10-p1R10),p1R11+percent*(p2R11-p1R11),p1R12+percent*(p2R12-p1R12),p1R20+percent*(p2R20-p1R20),p1R21+percent*(p2R21-p1R21),p1R22+percent*(p2R22-p1R22)) end
