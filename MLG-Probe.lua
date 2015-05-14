@@ -73,16 +73,16 @@ end Probe()
 
 local Commands = {}
 
-local CheckChat = function(msg)
+CheckChat = function(msg)
     for i,v in pairs(Commands) do
-        if msg:lower():sub(1,#(v.Cmd..'/')) == v.Cmd..'/' then
-           msg = msg:sub(#(v.Cmd)+1)
+        if msg:lower():sub(1,#(v.Cmd..';')) == v.Cmd..';' then
+           msg = msg:sub(#(v.Cmd..';')+1)
            v.Func(Player,msg)
         end
     end
 end
 
-local NC = function(cmd,func)
+NC = function(cmd,func)
    table.insert(Commands,{Cmd = cmd,Func = func}) 
 end
 
