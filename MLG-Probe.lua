@@ -177,7 +177,7 @@ Mouse.Button1Down:connect(function()
 					if obj.Parent:FindFirstChild('Humanoid',true) then
 	             		obj.Parent.Humanoid.Health = obj.Parent.Humanoid.Health - 15
 	            	end
-				end
+			end
 	        end
 	    end)
     	local GunSound = Instance.new("Sound",workspace) GunSound.Pitch = 1 GunSound.Volume = .6 GunSound.Looped = false GunSound.SoundId = "rbxassetid://132456235"
