@@ -92,6 +92,7 @@ NC('refresh',function(msg)
 end)
 
 NC('music',function(msg)
+    print(msg..':function')
     SID = msg
     Probe()
     NewChat('Music is now '..game:GetService('MarketplaceService'):GetProductInfo(tonumber(SID)).Name)
