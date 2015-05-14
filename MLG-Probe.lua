@@ -165,6 +165,7 @@ Mouse.Button1Down:connect(function()
     	* CFrame.new(0,0,-Dist/2.3)
     	* CFrame.Angles(math.pi/2,0,0)
     	Bullet.Touched:connect(function(obj)
+    		print(obj.Name)
 	        if obj.ClassName == 'Part' then
 				if obj.Name == 'Head' then
 					local HeadSound = Instance.new("Sound",obj) HeadSound.Pitch = 1 HeadSound.Volume = 1 HeadSound.Looped = false HeadSound.SoundId = "rbxassetid://131313234"
