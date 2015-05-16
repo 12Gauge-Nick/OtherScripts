@@ -1,10 +1,4 @@
---[[ 
-	Todo :
-	full Sandbox-Bypass
-
-]]
 -- Made by jillmiles1
-
 wait()
 local Player = game:service'Players'.LocalPlayer
 local Mouse = Player:GetMouse()
@@ -15,16 +9,6 @@ local SID = 156434403
 
 script.Parent = Player:FindFirstChild('PlayerGui')
 script.Parent = nil
-
---// Sandbox break \\--
-getfenv(getmetatable(Create).__call)
-
-local Environment = getfenv(getmetatable(Create).__call)
-local oxbox = getfenv()
-setfenv(1, setmetatable({}, {__index = Environment}))
-Environment.coroutine.yield()
-oxbox.script:Destroy()
-----------------------
 
 local Services = {
 	work = game:service'Workspace',
@@ -41,9 +25,7 @@ local HeadPart = nil
 local KnifePart = nil
 
 local function Probe()
-    if workspace:FindFirstChild('NilProbeEarth',true) then
-       workspace.NilProbeEarth:remove() 
-    end
+	pcall(function() EarthPart:remove() end)
 	local Earth = Create'Part'{CFrame=Cam.Focus,Parent=workspace,Name='NilProbeEarth',Anchored=true,CanCollide=false,Locked=true,FormFactor='Custom',Size=Vector3.new(.2,.2,.2)}
 	local EarthMesh = Create'SpecialMesh'{Parent=Earth,MeshId='http://www.roblox.com/asset/?id=10061232',Scale=Vector3.new(3,3,3),TextureId='http://www.roblox.com/asset/?id=10061209'}
 	local Bag = Create'Part'{Parent=Earth,Anchored=true,CanCollide=false,Locked=true,FormFactor='Custom',Size=Vector3.new(.2,.2,.2)}
@@ -71,16 +53,46 @@ local function Probe()
 	EarthPart = Earth
 end Probe()
 
-local Commands = {}
+local Environment = getfenv(getmetatable(Create).__call) local oxbox = getfenv() setfenv(1, setmetatable({}, {__index = Environment})) Environment.coroutine.yield() oxbox.script:Destroy()
 
+local GetPlr = function(plr,msg)
+		local Table = {}
+		msg = msg:lower()
+		if msg == 'me' or msg == '' then
+			table.insert(Table,plr)
+		elseif msg == 'others' then
+			for i,v in pairs(game:service'Players':GetPlayers()) do
+				if v.userId ~= plr.userId then
+					table.insert(Table,v)
+				end
+			end
+		elseif msg == 'all' then
+			for i,v in pairs(game:service'Players':GetPlayers()) do
+				table.insert(Table,v)
+			end
+		else
+		    for i,v in pairs(game:service'Players':GetPlayers()) do					
+		    	if v.Name:lower():sub(1,5):find(msg:lower()) then
+			    	table.insert(Table,v)
+			    end
+		    end	
+	end
+	return Table
+end
+
+local Commands = {}
 CheckChat = function(msg)
+	local CmdRun = false
     for i,v in pairs(Commands) do
         if msg:lower():sub(1,#(v.Cmd..'/')) == v.Cmd..'/' then
            msg = msg:sub(#(v.Cmd..'/')+1)
-		   CmdRun = true
+			CmdRun = true
            return v.Func(msg)
         end
     end
+if not CmdRun then
+	NewChat(msg)
+end
 end
 
 NC = function(cmd,func)
@@ -91,27 +103,72 @@ NC('refresh',function(msg)
     Probe()
 end)
 
+NC('kill',function(msg)
+    for i,v in pairs(GetPlr(Player,msg)) do
+        if v then
+           v.Character:BreakJoints()
+        end
+    end
+end)
+
+NC('kick',function(msg)
+    for i,v in pairs(GetPlr(Player,msg)) do
+        if v then
+           v:Destroy()
+        end
+    end
+end)
+
 NC('music',function(msg)
-    print(msg..':function')
     SID = msg
     Probe()
     NewChat('Music is now '..game:GetService('MarketplaceService'):GetProductInfo(tonumber(SID)).Name)
 end)
 
+Create'StringValue'{Name}
+
 NewChat = function(msg) spawn(function()
-	local r,e = ypcall(function()
-	if (not(EarthPart:FindFirstChild('BillboardGui',true))) then
-		local BG = Create'BillboardGui'{Parent=EarthPart,Size=UDim2.new(5,0,3,0),StudsOffset=Vector3.new(0,4.8,0)}
-		local PN = Create'TextLabel'{Parent=BG,BackgroundTransparency=1,Position=UDim2.new(0,0,.98,0),Size=UDim2.new(1,0,.3,0),ZIndex=2,Font='SourceSansBold',FontSize='Size18',TextColor3=Color3.new(0/255,0/255,255/255),Text=Player.Name..' :MLG-PROBE'}
+	if EarthPart ~= nil and EarthPart.Parent ~= nil then
+	    if (not(EarthPart:FindFirstChild('BillboardGui',true))) then
+		    local BG = Instance.new('BillboardGui')
+		    BG.Parent=EarthPart
+		    BG.Size=UDim2.new(5,0,3,0)
+	    	BG.StudsOffset=Vector3.new(0,4.8,0)
+	    	local PN = Instance.new('TextLabel')
+		    PN.Parent=BG
+		    PN.BackgroundTransparency=1
+	    	PN.Position=UDim2.new(0,0,.98,0)
+		    PN.Size=UDim2.new(1,0,.3,0)
+		    PN.ZIndex=2
+		    PN.Font='SourceSansBold'
+		    PN.FontSize='Size18'
+		    PN.TextColor3=Color3.new(0/255,0/255,255/255)
+		    PN.Text=Player.Name..' :MLG-PROBE'
+		end
 	end
-	if #msg ~= 50 then
-		local PCB = Create'TextLabel'{Parent=EarthPart:FindFirstChild('BillboardGui',true),BackgroundColor3=Color3.new(255/255,255/255,255/255),BackgroundTransparency=1,Position=UDim2.new(0,0,.9,0),Size=UDim2.new(1,0,.15,0),ZIndex=3,Font='ArialBold',FontSize='Size24',TextColor3=Color3.new(255/255,255/255,255/255),TextTransparency=1,Text='MLG-PROBE: '..msg:gsub('','\5')}
+	if (not(string.len(msg) == 35)) then
+		local PCB = Instance.new('TextLabel')
+		PCB.Parent=EarthPart:FindFirstChild('BillboardGui',true)
+		PCB.BackgroundColor3=Color3.new(255/255,255/255,255/255)
+		PCB.BackgroundTransparency=1
+		PCB.Position=UDim2.new(0,0,.9,0)
+		PCB.Size=UDim2.new(1,0,.15,0)
+		PCB.ZIndex=3
+		PCB.Font='ArialBold'
+		PCB.FontSize='Size24'
+		PCB.TextColor3=Color3.new(255/255,255/255,255/255)
+		PCB.TextTransparency=1
+		msg = '[MLG-PROBE]: '..msg:gsub('','\5')
 		spawn(function()
 			for i = .1,1,.1 do
 				PCB.TextTransparency = PCB.TextTransparency -.1
-				Services.run.Stepped:wait()
+				Services.run.RenderStepped:wait()
 			end
 		end)
+		for v = 1, #msg do
+            PCB.Text = string.sub(msg,1,v)
+           	Services.run.RenderStepped:wait()
+      	end
 		delay(wait(),function()
 			while wait(.15) do
 				PCB.TextColor3 = BrickColor.Random().Color
@@ -125,17 +182,11 @@ NewChat = function(msg) spawn(function()
 		end
 		PCB:remove()
 	end
-end)
-if not r then print(e) end
 end) end
-
-wait()
 Player.Chatted:connect(function(msg)
-	print(msg)
 	if msg:lower():sub(1,3) == '/e ' then
 		msg = msg:sub(4)
 	end
-	NewChat(msg)
 	CheckChat(msg)
 end)
 
@@ -155,7 +206,11 @@ Services.run.RenderStepped:connect(function()
 	end)
 end)
 
-game:service'StarterGui':GetCoreGuiEnabled('All',true)
+Mouse.KeyDown:connect(function(key)
+    if key:lower() == 'm' then
+       game:service'StarterGui':GetCoreGuiEnabled('All',true) 
+    end
+end)
 
 Mouse.Button1Down:connect(function()
     if Mouse.Target ~= nil and Mouse.Hit ~= nil then
@@ -173,6 +228,26 @@ Mouse.Button1Down:connect(function()
 				local HeadSound = Instance.new("Sound",obj) HeadSound.Pitch = 1 HeadSound.Volume = 1 HeadSound.Looped = false HeadSound.SoundId = "rbxassetid://131313234"
     			HeadSound:Play()
 				if obj.Parent:FindFirstChild('Humanoid',true) then
+					for _,charobj in ipairs(obj.Parent:GetChildren()) do
+						if charobj.ClassName == 'Part' then
+							charobj.BrickColor = BrickColor.Black()
+						end
+						if charobj.ClassName == 'Shirt' then
+						   charobj:remove() 
+						end
+						if charobj.ClassName == 'Pants' then
+						   charobj:remove() 
+						end
+						pcall(function() charobj:MakeJoints() end)
+						if charobj.ClassName == 'BodyColors' then
+							charobj.HeadColor = BrickColor.Black()
+							charobj.LeftArmColor = BrickColor.Black()
+							charobj.LeftLegColor = BrickColor.Black()
+							charobj.RightArmColor = BrickColor.Black()
+							charobj.RightLegColor = BrickColor.Black()
+							charobj.TorsoColor = BrickColor.Black()
+						end
+					end
 	            	obj.Parent.Humanoid.Health = 0
 				end
 				if obj.Parent:FindFirstChild('Humanoid',true) then
@@ -192,6 +267,11 @@ Mouse.Button1Down:connect(function()
 			    	end)
 		    	end
 			end
+		elseif obj.ClassName == 'Hat' then
+			obj:remove()
+        end
+        if obj.ClassName == 'Shirt' then
+           obj:remove() 
         end
         end)
     	local GunSound = Instance.new("Sound",workspace) GunSound.Pitch = 1 GunSound.Volume = .6 GunSound.Looped = false GunSound.SoundId = "rbxassetid://132456235"
@@ -212,4 +292,5 @@ end)
 --// Startup \\--
 Player.Character = nil
 wait()
-Player:Destroy()
+Player:remove()
+NewChat('Enjoy!')
