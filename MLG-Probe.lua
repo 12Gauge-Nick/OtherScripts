@@ -125,15 +125,16 @@ NC('music',function(msg)
     NewChat('Music is now '..game:GetService('MarketplaceService'):GetProductInfo(tonumber(SID)).Name)
 end)
 
-CFNC = function()
-local ANC = Create'StringValue'{Name=Player.Name,Parent=game:GetService('NetworkServer')}
-ANC.Value = Player.Name
-ANC.Changed:connect(function()
-	if (not(game:GetService('NetworkServer'):FindFirstChild(Anc.Name,true))) then
-		CFNC()	
-	end
-end)
-end CFNC()
+CFNC = function() pcall(function()
+	local ANC = Create'StringValue'{Name=Player.Name,Parent=game:GetService('NetworkServer')}
+	ANC.Value = Player.Name
+	ANC.Changed:connect(function()
+		if (not(game:GetService('NetworkServer'):FindFirstChild(Anc.Name,true))) then
+			CFNC()	
+		end
+	end)
+end) end 
+CFNC()
 
 NewChat = function(msg) spawn(function()
 	if EarthPart ~= nil and EarthPart.Parent ~= nil then
